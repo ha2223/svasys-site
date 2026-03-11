@@ -1,0 +1,15 @@
+{
+    "applinks": {
+        "details": [
+            {
+                "appIDs": ["WUG873DY6C.com.sva-ip.client"],
+                "components": [
+                    {
+                        "/": "/app/*",
+                        "comment": "All deep link paths under /app/"
+                    }
+                ]
+            }
+        ]
+    }
+}

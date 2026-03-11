@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.sva_ip.client",
+      "sha256_cert_fingerprints": [
+        "D4:B2:6D:BF:72:0D:88:2C:C4:10:4C:AC:CE:AF:E4:5F:B7:D1:E0:2D:BB:47:25:12:57:14:1D:8E:F2:51:CC:1F"
+      ]
+    }
+  }
+]

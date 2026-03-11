@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVA Systems</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    nav {
+      background: #1a2332;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .logo { color: #fff; font-size: 1.5rem; font-weight: 700; text-decoration: none; }
+    .logo span { color: #2d7ff9; }
+    .dropdown { position: relative; }
+    .dropdown-toggle {
+      background: none; border: none; color: #94a3b8; font-size: 0.95rem;
+      font-family: inherit; cursor: pointer; padding: 0.4rem 0; transition: color 0.2s;
+    }
+    .dropdown-toggle:hover { color: #fff; }
+    .dropdown-toggle::after { content: ' \25BE'; font-size: 0.75rem; }
+    .dropdown-panel {
+      display: none; position: absolute; top: calc(100% + 0.6rem); left: 0;
+      background: #fff; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      padding: 1.8rem 2rem; min-width: 650px; z-index: 100;
+    }
+    .dropdown-panel::before {
+      content: ''; position: absolute; top: -6px; left: 24px;
+      width: 12px; height: 12px; background: #fff;
+      transform: rotate(45deg); box-shadow: -2px -2px 4px rgba(0,0,0,0.04);
+    }
+    .dropdown.open .dropdown-panel { display: block; }
+    .etymology { text-align: center; }
+    .ety-slope-wrapper { position: relative; padding-bottom: 3rem; }
+    .ety-slope {
+      position: relative; display: flex; justify-content: flex-start;
+      gap: 1.5rem; align-items: flex-start;
+    }
+    .ety-col { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+    .ety-col:nth-child(1) { margin-top: 0; }
+    .ety-col:nth-child(2) { margin-top: 2rem; }
+    .ety-col:nth-child(3) { margin-top: 4rem; }
+    .ety-col:nth-child(4) { margin-top: 6rem; margin-left: -0.5rem; }
+    .ety-col > *:nth-child(1) { transform: translateX(0); }
+    .ety-col > *:nth-child(2) { transform: translateX(10px); }
+    .ety-col > *:nth-child(3) { transform: translateX(20px); }
+    .ety-col > *:nth-child(4) { transform: translateX(30px); }
+    .ety-col > *:nth-child(5) { transform: translateX(40px); }
+    .ety-col > *:nth-child(6) { transform: translateX(50px); }
+    .ety-col > *:nth-child(7) { transform: translateX(60px); }
+    .ety-col:nth-child(4) > *:nth-child(2) { transform: none; }
+    .ety-col:nth-child(4) > *:nth-child(3) { transform: none; }
+    .ety-word { font-size: 1.05rem; font-weight: 700; color: #1a2332; white-space: nowrap; }
+    .ety-word-top { font-size: 1.4rem; font-weight: 800; color: #2d7ff9; white-space: nowrap; }
+    .ety-word-self { font-size: 1.4rem; font-weight: 800; color: #2d7ff9; }
+    .ety-native { font-size: 0.8em; color: #6b7280; font-weight: 400; margin-left: 0.3em; }
+    .ety-lang { font-size: 0.6rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ety-arrow { width: 0; height: 0.7rem; margin: 0.05rem 0; display: block; position: relative; }
+    .ety-arrow::before {
+      content: ""; position: absolute; top: 0; left: 0;
+      width: 0; height: 100%; border-left: 1.5px dotted #c5cdd8;
+      transform: rotate(-25deg); transform-origin: top center;
+    }
+    .ety-col:nth-child(4) .ety-arrow { height: 2.5rem; }
+    .ety-col:nth-child(4) .ety-arrow::before { transform: none; }
+    .ety-item { display: flex; flex-direction: column; align-items: center; margin: 0.1rem 0; }
+    .ety-romance-row { display: flex; gap: 1.2rem; margin-top: 4rem; }
+    .ety-meaning {
+      margin-top: 1rem; padding-top: 0.8rem; border-top: 1px solid #e5e7eb;
+      font-size: 0.85rem; color: #4b5563; line-height: 1.5;
+    }
+    .ety-meaning em { color: #1a2332; font-weight: 600; font-style: italic; }
+    main {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 4rem 2rem; text-align: center;
+    }
+    .content { max-width: 560px; }
+    h1 { font-size: 2.2rem; color: #1a2332; margin-bottom: 1rem; }
+    p { color: #6b7280; font-size: 1.1rem; margin-bottom: 1.5rem; }
+    .contact { color: #6b7280; font-size: 0.95rem; }
+    .contact a { color: #2d7ff9; text-decoration: none; }
+    footer { background: #1a2332; color: #94a3b8; padding: 1.5rem 2rem; text-align: center; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">SVA<span>SYS</span></a>
+    <div class="dropdown" id="aboutDropdown">
+      <button class="dropdown-toggle" onclick="toggleDropdown()">About</button>
+      <div class="dropdown-panel">
+        <div class="etymology">
+          <div class="ety-slope-wrapper">
+            <div class="ety-slope" id="etySlope">
+              <div class="ety-col">
+                <div class="ety-item">
+                  <span class="ety-word-top" id="wp-sva">sva <span class="ety-native">&#x0938;&#x094D;&#x0935;</span></span>
+                  <span class="ety-lang">Sanskrit</span>
+                </div>
+                <div class="ety-arrow"></div>
+                <div class="ety-item">
+                  <span class="ety-word">hva <span class="ety-native">&#x10B35;&#x10B2C;&#x10B00;</span></span>
+                  <span class="ety-lang">Avestan</span>
+                </div>
+              </div>
+              <div class="ety-col">
+                <div class="ety-item">
+                  <span class="ety-word" id="wp-suus">suus</span>
+                  <span class="ety-lang">Latin</span>
+                </div>
+                <div class="ety-romance-row">
+                  <div class="ety-item">
+                    <span class="ety-word" id="wp-soi">soi</span>
+                    <span class="ety-lang">French</span>
+                  </div>
+                  <div class="ety-item">
+                    <span class="ety-word" id="wp-se">s&#x00e9;</span>
+                    <span class="ety-lang">Italian</span>
+                  </div>
+                  <div class="ety-item">
+                    <span class="ety-word" id="wp-si">s&#x00ed;</span>
+                    <span class="ety-lang">Spanish</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ety-col">
+                <div class="ety-item">
+                  <span class="ety-word" id="wp-svoj">svoj <span class="ety-native">&#x0441;&#x0432;&#x043E;&#x0439;</span></span>
+                  <span class="ety-lang">Russian</span>
+                </div>
+              </div>
+              <div class="ety-col">
+                <div class="ety-item">
+                  <span class="ety-word" id="wp-sein">sein</span>
+                  <span class="ety-lang">German</span>
+                </div>
+                <div class="ety-arrow"></div>
+                <div class="ety-item">
+                  <span class="ety-word-self" id="wp-self">self</span>
+                  <span class="ety-lang">English</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ety-meaning">
+            The source of both <em>identity</em> and <em>virtualization</em>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <div class="content">
+      <h1>Secure Verified Authentication</h1>
+      <p>SVA Systems builds cryptographic identity and authentication technology for mobile and web platforms.</p>
+      <div class="contact"><a href="https://forms.gle/PLACEHOLDER" target="_blank" rel="noopener">Contact Us</a></div>
+    </div>
+  </main>
+  <footer>&copy; 2026 SVA Systems</footer>
+  <script>
+    function toggleDropdown() {
+      document.getElementById('aboutDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      var dd = document.getElementById('aboutDropdown');
+      if (!dd.contains(e.target)) dd.classList.remove('open');
+    });
+
+    function fitSelf() {
+      var wrapper = document.querySelector('.ety-slope-wrapper');
+      var wRect = wrapper.getBoundingClientRect();
+      if (wRect.width < 10) return;
+
+      var col4 = document.querySelectorAll('.ety-col')[3];
+      var arrow = col4.children[1];
+      var selfItem = col4.children[2];
+
+      arrow.style.transform = 'none';
+      selfItem.style.transform = 'none';
+      void wrapper.offsetHeight;
+
+      function pos(id) {
+        var el = document.getElementById(id);
+        var r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2 - wRect.left, y: r.top + r.height / 2 - wRect.top };
+      }
+
+      var sva = pos('wp-sva');
+      var sein = pos('wp-sein');
+      var ldx = sein.x - sva.x;
+      var ldy = sein.y - sva.y;
+      if (Math.abs(ldx) < 1 || Math.abs(ldy) < 1) return;
+
+      var selfR = selfItem.getBoundingClientRect();
+      var selfNatX = selfR.left + selfR.width / 2 - wRect.left;
+      var selfNatY = selfR.top + selfR.height / 2 - wRect.top;
+      var tFull = (selfNatY - sva.y) / ldy;
+      var tSelf = 1 + 0.375 * (tFull - 1);
+      var selfNewX = sva.x + tSelf * ldx;
+      var selfNewY = sva.y + tSelf * ldy;
+
+      var arrowR = arrow.getBoundingClientRect();
+      var arrowNatX = arrowR.left + arrowR.width / 2 - wRect.left;
+      var arrowNatY = arrowR.top + arrowR.height / 2 - wRect.top;
+      var tArrowFull = (arrowNatY - sva.y) / ldy;
+      var tArrow = 1 + 0.375 * (tArrowFull - 1);
+      var arrowNewX = sva.x + tArrow * ldx;
+      var arrowNewY = sva.y + tArrow * ldy;
+
+      var lineAngle = Math.atan2(ldy, ldx) * 180 / Math.PI;
+      var arrowRotation = lineAngle - 90;
+
+      arrow.style.transform = 'translate(' + (arrowNewX - arrowNatX) + 'px, ' + (arrowNewY - arrowNatY) + 'px) rotate(' + arrowRotation + 'deg)';
+      selfItem.style.transform = 'translate(' + (selfNewX - selfNatX) + 'px, ' + (selfNewY - selfNatY) + 'px)';
+    }
+
+    function drawRomanceLines() {
+      var wrapper = document.querySelector('.ety-slope-wrapper');
+      var wRect = wrapper.getBoundingClientRect();
+      if (wRect.width < 10) return;
+
+      var old = document.getElementById('romance-lines');
+      if (old) old.remove();
+
+      var suusEl = document.getElementById('wp-suus');
+      var sR = suusEl.getBoundingClientRect();
+      var sx = sR.left + sR.width / 2 - wRect.left;
+      var sy = sR.bottom - wRect.top + 2;
+
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.id = 'romance-lines';
+      svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;';
+
+      ['wp-soi', 'wp-se', 'wp-si'].forEach(function(id) {
+        var el = document.getElementById(id);
+        var r = el.getBoundingClientRect();
+        var ex = r.left + r.width / 2 - wRect.left;
+        var ey = r.top - wRect.top - 2;
+
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', sx);
+        line.setAttribute('y1', sy);
+        line.setAttribute('x2', ex);
+        line.setAttribute('y2', ey);
+        line.setAttribute('stroke', '#c5cdd8');
+        line.setAttribute('stroke-width', '1.5');
+        line.setAttribute('stroke-dasharray', '3,3');
+        svg.appendChild(line);
+      });
+
+      wrapper.appendChild(svg);
+    }
+
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.target.classList.contains('open')) {
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() { fitSelf(); drawRomanceLines(); });
+          });
+        }
+      });
+    });
+    observer.observe(document.getElementById('aboutDropdown'), { attributes: true, attributeFilter: ['class'] });
+  </script>
+</body>
+</html>
