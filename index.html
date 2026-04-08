@@ -79,7 +79,7 @@
       width: 0; height: 100%; border-left: 1.5px dotted #c5cdd8;
       transform: rotate(-25deg); transform-origin: top center;
     }
-    .ety-col:nth-child(4) .ety-arrow { height: 2.5rem; }
+    .ety-col:nth-child(4) .ety-arrow { height: 3.5rem; }
     .ety-col:nth-child(4) .ety-arrow::before { transform: none; }
     .ety-item { display: flex; flex-direction: column; align-items: center; margin: 0.1rem 0; }
     .ety-romance-row { display: flex; gap: 1.2rem; margin-top: 4rem; }
@@ -263,7 +263,7 @@
       var selfNatX = selfR.left + selfR.width / 2 - wRect.left;
       var selfNatY = selfR.top + selfR.height / 2 - wRect.top;
       var tFull = (selfNatY - sva.y) / ldy;
-      var tSelf = 1 + 0.375 * (tFull - 1);
+      var tSelf = 1 + 0.18 * (tFull - 1);
       var selfNewX = sva.x + tSelf * ldx;
       var selfNewY = sva.y + tSelf * ldy;
 
@@ -271,7 +271,7 @@
       var arrowNatX = arrowR.left + arrowR.width / 2 - wRect.left;
       var arrowNatY = arrowR.top + arrowR.height / 2 - wRect.top;
       var tArrowFull = (arrowNatY - sva.y) / ldy;
-      var tArrow = 1 + 0.375 * (tArrowFull - 1);
+      var tArrow = 1 + 0.18 * (tArrowFull - 1);
       var arrowNewX = sva.x + tArrow * ldx;
       var arrowNewY = sva.y + tArrow * ldy;
 
@@ -280,6 +280,65 @@
 
       arrow.style.transform = 'translate(' + (arrowNewX - arrowNatX) + 'px, ' + (arrowNewY - arrowNatY) + 'px) rotate(' + arrowRotation + 'deg)';
       selfItem.style.transform = 'translate(' + (selfNewX - selfNatX) + 'px, ' + (selfNewY - selfNatY) + 'px)';
+    }
+
+    function drawStaircaseLines() {
+      var wrapper = document.querySelector('.ety-slope-wrapper');
+      var wRect = wrapper.getBoundingClientRect();
+      if (wRect.width < 10) return;
+
+      var old = document.getElementById('staircase-lines');
+      if (old) old.remove();
+
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.id = 'staircase-lines';
+      svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;';
+
+      var chain = [
+        ['wp-sva', 'wp-suus'],
+        ['wp-suus', 'wp-svoj'],
+        ['wp-svoj', 'wp-sein']
+      ];
+      chain.forEach(function(pair) {
+        var fromEl = document.getElementById(pair[0]);
+        var toEl = document.getElementById(pair[1]);
+        if (!fromEl || !toEl) return;
+        var fR = fromEl.getBoundingClientRect();
+        var tR = toEl.getBoundingClientRect();
+
+        var fx, fy, tx, ty;
+        if (pair[0] === 'wp-suus' && pair[1] === 'wp-svoj') {
+          fx = fR.right - wRect.left + 4;
+          fy = fR.top + fR.height * 0.75 - wRect.top;
+          tx = tR.left - wRect.left - 4;
+          ty = tR.top + tR.height / 2 - wRect.top;
+        } else if (pair[0] === 'wp-svoj') {
+          var svojItem = fromEl.closest('.ety-item');
+          var langEl = svojItem ? svojItem.querySelector('.ety-lang') : null;
+          var lR = langEl ? langEl.getBoundingClientRect() : fR;
+          fx = lR.right - wRect.left + 4;
+          fy = lR.top + lR.height * 0.75 - wRect.top;
+          tx = tR.left - wRect.left - 4;
+          ty = tR.top + tR.height / 2 - wRect.top;
+        } else {
+          fx = fR.right - wRect.left + 4;
+          fy = fR.top + fR.height / 2 - wRect.top;
+          tx = tR.left - wRect.left - 4;
+          ty = tR.top + tR.height / 2 - wRect.top;
+        }
+
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', fx);
+        line.setAttribute('y1', fy);
+        line.setAttribute('x2', tx);
+        line.setAttribute('y2', ty);
+        line.setAttribute('stroke', '#c5cdd8');
+        line.setAttribute('stroke-width', '1.5');
+        line.setAttribute('stroke-dasharray', '3,3');
+        svg.appendChild(line);
+      });
+
+      wrapper.appendChild(svg);
     }
 
     function drawRomanceLines() {
@@ -323,7 +382,7 @@
       mutations.forEach(function(m) {
         if (m.target.classList.contains('open')) {
           requestAnimationFrame(function() {
-            requestAnimationFrame(function() { fitSelf(); drawRomanceLines(); });
+            requestAnimationFrame(function() { fitSelf(); drawRomanceLines(); drawStaircaseLines(); });
           });
         }
       });
